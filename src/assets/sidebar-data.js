@@ -11,4 +11,9 @@ export const SidebarData = [
     title: "Login",
     cName: "nav-text",
   },
+  {
+    path : "/addField",
+    title: "Agregar cancha",
+    cName: "nav-text",
+  },
 ]

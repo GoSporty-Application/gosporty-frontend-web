@@ -1,0 +1,97 @@
+.block {
+  position: relative;
+  width: 800px;
+  margin: 0 auto;
+}
+
+.input-container {
+  margin-bottom: 10px;
+}
+
+.button-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.bg-gosporty-gradient {
+  background: linear-gradient(to right, #a6c0fe, #f7b500);
+  background-size: cover;
+}
+
+.font-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
+}
+
+.button-container button {
+  background-color: #f7b500;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.button-container button:hover {
+  background-color: #f7b500;
+}
+
+.input-container label {
+  display: block;
+}
+
+.input-container input,
+.input-container select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+}
+
+.input-container select {
+  appearance: none;
+}
+
+.input-container input[type='time']::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+.input-container input[type='file'] {
+  padding: 0.5rem 0;
+}
+
+.preview-image {
+  width: 600px; /* Ajusta el tamaño de la vista previa según tus necesidades */
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.mosaic-image {
+  width: 200px; /* Ajusta el tamaño del mosaico según tus necesidades */
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.w-1/2 {
+  width: 50%;
+  box-sizing: border-box;
+}
+
+.flex {
+  display: flex;
+}
+
+.pr-2 {
+  padding-right: 0.5rem;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
+}

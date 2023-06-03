@@ -21,7 +21,7 @@ export const data=[
     startHour:8,
     endHour:22,
     status:true,
-    players:16,
+    players:15,
   },
   {
     img:require("../assets/football-bg-1.jpg"),
