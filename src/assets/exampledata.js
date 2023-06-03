@@ -1,7 +1,7 @@
 export const data=[
   {
     img:require("../assets/football-bg-1.jpg"),
-    id:'Fut11',
+    id:'Fut1',
     startHour:8,
     endHour:22,
     status:true,
@@ -9,7 +9,7 @@ export const data=[
   },
   {
     img:require("../assets/football-bg-1.jpg"),
-    id:'Fut7',
+    id:'Fut2',
     startHour:8,
     endHour:22,
     status:true,
@@ -17,15 +17,7 @@ export const data=[
   },
   {
     img:require("../assets/football-bg-1.jpg"),
-    id:'Fut7',
-    startHour:8,
-    endHour:22,
-    status:true,
-    players:15,
-  },
-  {
-    img:require("../assets/football-bg-1.jpg"),
-    id:'Fut7',
+    id:'Fut3',
     startHour:8,
     endHour:22,
     status:true,
@@ -33,18 +25,11 @@ export const data=[
   },
   {
     img:require("../assets/football-bg-1.jpg"),
-    id:'Fut7',
+    id:'Fut4',
     startHour:8,
     endHour:22,
     status:true,
     players:16,
   },
-  {
-    img:require("../assets/football-bg-1.jpg"),
-    id:'Fut7',
-    startHour:8,
-    endHour:22,
-    status:true,
-    players:16,
-  },
+
 ]
