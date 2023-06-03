@@ -19,7 +19,7 @@ const Navbar = () => {
           <Link to="#" className="menu-bars open">
             <FaIcons.FaBars onClick={viewSidebar} />
           </Link>
-          <Link to="#">
+          <Link to="/addField">
             <div className="flex flex-row justify-end py-4">
               <button className="h-12 mx-4 px-2 rounded-xl text-white font-poppins font-bold bg-gosporty-green drop-shadow-md">
                 Agregar cancha
