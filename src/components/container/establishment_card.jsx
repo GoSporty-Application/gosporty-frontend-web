@@ -1,35 +1,43 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
-import { FaEdit } from "react-icons/fa";
+import { MdOutlineRemoveRedEye } from "react-icons/md"
 
-const FieldCard = ({data }) => {
+
+const EstablishmentCard = ({data }) => {
   return (
     <div className="block max-w-sm rounded-xl bg-gosporty-gray shadow-lg pb-2 m-4">
-      <img className="rounded-t-xl" src={data.img} alt="Foto de la cancha" />
+      <img className="rounded-t-xl" src={data.photo} alt="Foto de la cancha" />
       <div className="px-6 py-4 rounded">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">{data.name}</h1>
-          <Link to={`/editField/${data.id}`}>
+          <Link to={`/fields/${data.id}`}>
             <button className="rounded-full bg-gosporty-blue w-12 h-12 flex items-center justify-center ml-auto">
-              <FaEdit className="text-white text-3xl" />
+              <MdOutlineRemoveRedEye className="text-white text-3xl" />
             </button>
           </Link>
         </div>
-        <div className="flex flex-row">
-          <p className="font-montserrat font-bold">Jugadores sugeridos:</p>
-          <p className="pl-2">{data.size}</p>
+        <div className="flex flex-row pt-2">
+          <p className="font-montserrat font-bold">Horarios:</p>
+          <p className="pl-2">{data.journey }</p>
         </div>
-        <div className="flex flex-row mt-4 px-2 py-1 bg-gosporty-yellow rounded-xl">
-          <p className="font-montserrat font-bold text-white">Estado:</p>
-          <p className="pl-2 text-white">{data.available ? "Activo" : "Deshabilitado"}</p>
+        <div className="flex flex-row">
+          <p className="font-montserrat font-bold">Dirección:</p>
+          <p className="pl-2">{data.address}</p>
+        </div>
+        <div className="flex flex-row">
+          <p className="font-montserrat font-bold">Calificación:</p>
+          <p className="pl-2">{data.rating}</p>
+        </div>
+        <div className="flex flex-row">
+        <img className="rounded-t-xl" src={data.logo} />
         </div>
       </div>
     </div>
   );
 };
 
-FieldCard.propTypes = {
+EstablishmentCard.propTypes = {
   data: PropTypes.shape({
     id: PropTypes.string.isRequired,
     img: PropTypes.string.isRequired,
@@ -41,4 +49,4 @@ FieldCard.propTypes = {
   }).isRequired,
 };
 
-export default FieldCard;
+export default EstablishmentCard;

@@ -1,22 +1,23 @@
 import React, { useState } from "react";
 import "../../styles/addCard.css";
 import { useNavigate } from "react-router-dom";
-import { data } from "../../assets/exampledata";
+import { firebase, firestore } from "../../firebase";
+import { useParams } from "react-router-dom";
 
-const AddCard = () => {
-  const [startHour, setStartHour] = useState("");
-  const [endHour, setEndHour] = useState("");
+const AddCard = ({ updateFieldData }) => {
+  const { id: establishmentId} = useParams();
+
+  const db = firebase.firestore();
+
+  const [name, setName] = useState('');
   const [jugadores, setJugadores] = useState(0);
   const [estado, setEstado] = useState("activo");
   const [imagen, setImagen] = useState(null);
   const navigate = useNavigate();
 
-  const handleStartHourChange = (e) => {
-    setStartHour(e.target.value);
-  };
-
-  const handleEndHourChange = (e) => {
-    setEndHour(e.target.value);
+  const handleNameChange = (event) => {
+    const value = event.target.value;
+    setName(value);
   };
 
   const handleJugadoresChange = (e) => {
@@ -26,43 +27,62 @@ const AddCard = () => {
   const handleEstadoChange = (e) => {
     setEstado(e.target.value);
   };
-
   const handleImagenChange = (e) => {
     const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      setImagen(reader.result);
-    };
-
+  
     if (file) {
-      reader.readAsDataURL(file);
+      // Subir la imagen a Firebase Storage
+      const storageRef = firebase.storage().ref();
+      const fileRef = storageRef.child(file.name);
+      fileRef.put(file)
+        .then((snapshot) => {
+          // Obtener la URL de descarga de la imagen subida
+          return snapshot.ref.getDownloadURL();
+        })
+        .then((downloadURL) => {
+          setImagen(downloadURL);
+        })
+        .catch((error) => {
+          console.error('Error al subir la imagen:', error);
+        });
     } else {
       setImagen("../../assets/football-bg-1.jpg");
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newCard = {
-      img: imagen || require("../../assets/football-bg-1.jpg"),
-      id: "Fut"+jugadores,
-      startHour: startHour || 4,
-      endHour: endHour || 23,
-      status: estado || true,
-      players: jugadores || 12,
+      name : name || "Cancha",
+      photo: imagen || "../../assets/football-bg-1.jpg",
+      available: estado || true,
+      size: jugadores || 12,
     };
 
-    data.push(newCard);
+    //data.push(newCard);
 
-    setStartHour("");
-    setEndHour("");
+    try{
+      const fieldsCollectionRef = firebase.firestore()
+      .collection("establishments")
+      .doc(establishmentId)
+      .collection("fields");
+  
+    await fieldsCollectionRef.add(newCard);
+  
     setJugadores(0);
     setEstado("activo");
     setImagen("");
-
+  
+    const snapshot = await fieldsCollectionRef.get();
+    const data = snapshot.docs.map((doc) => doc.data());
+    // updateFieldData(data);
+  
     navigate("/");
+
+    }catch (error) {
+      console.error('Error al guardar la información:', error);
+    }
   };
 
   return (
@@ -86,44 +106,21 @@ const AddCard = () => {
               />
             </div>
           </div>
+
           <div className="w-1/2 pl-4">
-            <div className="input-container">
-              <div className="input-container">
-                <div className="flex">
-                  <div className="w-1/2 pr-2">
-                    <label
-                      htmlFor="startHour"
-                      className="font-montserrat font-bold"
-                    >
-                      Start Hour:
-                    </label>
-                    <input
-                      id="startHour"
-                      type="time"
-                      className="pl-2"
-                      value={startHour}
-                      onChange={handleStartHourChange}
-                      required
-                    />
-                  </div>
-                  <div className="w-1/2 pl-2">
-                    <label
-                      htmlFor="endHour"
-                      className="font-montserrat font-bold"
-                    >
-                      End Hour:
-                    </label>
-                    <input
-                      id="endHour"
-                      type="time"
-                      className="pl-2"
-                      value={endHour}
-                      onChange={handleEndHourChange}
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
+            
+          <div className="input-container">
+              <label htmlFor="name" className="font-montserrat font-bold">
+                Nombre:
+              </label>
+              <input
+                id="name"
+                type="text"
+                className="pl-2"
+                value={name}
+                onChange={handleNameChange}
+                required
+              />
             </div>
 
             <div className="input-container">
@@ -162,6 +159,7 @@ const AddCard = () => {
       </form>
     </div>
   );
+  
 };
 
 export default AddCard;

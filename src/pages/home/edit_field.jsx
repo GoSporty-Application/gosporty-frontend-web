@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import EditCard from "../../components/container/edit_field_card";
-import Navbar from "../../components/container/navbar";
+import Navbar from "../../components/container/navbar_establishment";
 import { data } from "../../assets/exampledata";
 
 const EditField = () => {

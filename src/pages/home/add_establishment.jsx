@@ -1,19 +1,19 @@
 import React from "react";
-import AddCard from "../../components/container/add_field_card";
+import AddEstablishmentCard from "../../components/container/add_establishment_card";
 import { data } from "../../assets/exampledata";
 import Navbar from "../../components/container/navbar_establishment";
 
-const AddField = () => {
+const AddEstablishment = () => {
   return (
     <>
       <Navbar />
       <section className="bg-white">
         <div className="flex flex-row flex-wrap justify-evenly">
-          <AddCard data={data} />
+          <AddEstablishmentCard data={data} />
         </div>
       </section>
     </>
   );
 };
 
-export default AddField;
+export default AddEstablishment;
