@@ -3,6 +3,7 @@ import "../../styles/addCard.css";
 import { useNavigate } from "react-router-dom";
 import { firebase, firestore } from "../../firebase";
 import { useParams } from "react-router-dom";
+import axios from 'axios';
 
 const AddEstablishmentCard = ({ updateFieldData }) => {
   const { id: establishmentId} = useParams();
@@ -15,6 +16,10 @@ const AddEstablishmentCard = ({ updateFieldData }) => {
   const [journey, setJourney] = useState('');
   const [address, setAddress] = useState("");
   const [imagen, setImagen] = useState(null);
+
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+
   const navigate = useNavigate();
 
   const handleNameChange = (event) => {
@@ -24,19 +29,22 @@ const AddEstablishmentCard = ({ updateFieldData }) => {
 
   const handleStartHourChange = (e) => {
     setStartHour(e.target.value);
+    handleJourneyConcatenation()
   };
 
   const handleEndHourChange = (e) => {
     setEndHour(e.target.value);
+    handleJourneyConcatenation()
   };
 
   const handleJourneyConcatenation = () => {
-    const newJourney = startHour.concat(' - ', endHour);
+    const newJourney = startHour.concat('-', endHour);
     setJourney(newJourney);
   };
 
   const handleAddressChange = (e) => {
     setAddress(e.target.value);
+    geocodeAddress();
   };
 
   const handleImagenChange = (e) => {
@@ -62,6 +70,30 @@ const AddEstablishmentCard = ({ updateFieldData }) => {
     }
   };
 
+  const geocodeAddress = async () => {
+    try {
+      //const sanitizedAddress = sanitizeAddress(address);
+
+      const response = await axios.get(
+        //`https://maps.googleapis.com/maps/api/geocode/json?address=${sanitizedAddress}&key=AIzaSyD90h4T-ATpwXyR5-8YijCzgbDNKBrw6Hk`
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyD90h4T-ATpwXyR5-8YijCzgbDNKBrw6Hk`
+      );
+  
+      const { results } = response.data;
+  
+      if (results.length > 0) {
+        const { lat, lng } = results[0].geometry.location;
+        setLatitude(lat);
+        setLongitude(lng);
+      } else {
+        console.error('No se encontraron resultados para la dirección especificada.');
+      }
+    } catch (error) {
+      console.error('Error al obtener la latitud y longitud:', error);
+    }
+  };
+
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -71,11 +103,14 @@ const AddEstablishmentCard = ({ updateFieldData }) => {
       photo: imagen || "../../assets/football-bg-1.jpg",
       address: address || "Cali - Colombia",
       rating: "5.0",
+      lat: latitude,
+      long: longitude,
     };
 
     try{
       const fieldsCollectionRef = firebase.firestore()
       .collection("establishments")
+      
 
       const docRef = await fieldsCollectionRef.add(newCard);
 
@@ -84,7 +119,7 @@ const AddEstablishmentCard = ({ updateFieldData }) => {
       newCard.id = newCardId;
 
       await docRef.update(newCard);
-
+      
   
     setImagen("");
   
