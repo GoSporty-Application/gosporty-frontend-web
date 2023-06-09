@@ -10,7 +10,7 @@ const FieldCard = ({data }) => {
       <div className="px-6 py-4 rounded">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">{data.name}</h1>
-          <Link to={`/editField/${data.id}`}>
+          <Link to={`/editField/${data.idEstablishment}/${data.idField}`}>
             <button className="rounded-full bg-gosporty-blue w-12 h-12 flex items-center justify-center ml-auto">
               <FaEdit className="text-white text-3xl" />
             </button>

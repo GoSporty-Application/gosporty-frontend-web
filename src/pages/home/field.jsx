@@ -27,28 +27,13 @@ const Field = () => {
     fetchData();
   }, [id]);
 
- /* const updateFieldData = (updatedData) => {
-    setFieldData((prevData) => {
-      const newData = prevData.map((item) => {
-        if (item.id === updatedData.id) {
-          return {
-            ...item,
-            ...updatedData
-          };
-        }
-        return item;
-      });
-      return newData;
-    });
-  };*/
-
   return (
     <>
       <Navbar />
       <section className="bg-white">
         <div className="flex flex-row flex-wrap justify-evenly">
           {fieldData.map((item, index) => (
-            <FieldCard data={item} key={index} />
+            <FieldCard data={{ ...item, idEstablishment: id, idField: item.id }} key={index} />
           ))}
         </div>
       </section>

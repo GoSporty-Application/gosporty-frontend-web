@@ -21,12 +21,15 @@ const AddCard = ({ updateFieldData }) => {
   };
 
   const handleJugadoresChange = (e) => {
-    setJugadores(parseInt(e.target.value));
+    const value = e.target.value;
+    setJugadores(value);
   };
 
   const handleEstadoChange = (e) => {
-    setEstado(e.target.value);
+    const value = e.target.value === 'activo'; // Convertir 'activo' a true y 'inactivo' a false
+    setEstado(value);
   };
+
   const handleImagenChange = (e) => {
     const file = e.target.files[0];
   
@@ -56,26 +59,32 @@ const AddCard = ({ updateFieldData }) => {
     const newCard = {
       name : name || "Cancha",
       photo: imagen || "../../assets/football-bg-1.jpg",
-      available: estado || true,
-      size: jugadores || 12,
+      available: estado === "activo",
+      size: jugadores || "12",
     };
-
-    //data.push(newCard);
 
     try{
       const fieldsCollectionRef = firebase.firestore()
       .collection("establishments")
       .doc(establishmentId)
       .collection("fields");
+
+    const docRef = await fieldsCollectionRef.add(newCard);
+
+    const newCardId = docRef.id;
+
+    newCard.id = newCardId;
+
+    await docRef.update(newCard);
   
-    await fieldsCollectionRef.add(newCard);
+    
   
     setJugadores(0);
     setEstado("activo");
     setImagen("");
   
-    const snapshot = await fieldsCollectionRef.get();
-    const data = snapshot.docs.map((doc) => doc.data());
+    //const snapshot = await fieldsCollectionRef.get();
+    //const data = snapshot.docs.map((doc) => doc.data());
     // updateFieldData(data);
   
     navigate("/");
@@ -129,7 +138,7 @@ const AddCard = ({ updateFieldData }) => {
               </label>
               <input
                 id="jugadores"
-                type="number"
+                type="text"
                 className="pl-2"
                 value={jugadores}
                 onChange={handleJugadoresChange}

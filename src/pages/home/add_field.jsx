@@ -9,7 +9,7 @@ const AddField = () => {
       <Navbar />
       <section className="bg-white">
         <div className="flex flex-row flex-wrap justify-evenly">
-          <AddCard data={data} />
+          <AddCard />
         </div>
       </section>
     </>

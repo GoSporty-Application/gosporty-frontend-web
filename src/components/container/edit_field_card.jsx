@@ -1,74 +1,91 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { FieldContext } from "../../context/FieldContext";
-import { data } from "../../assets/exampledata";
+import React, { useState } from "react";
+import { firebase } from "../../firebase";
+import { useNavigate, useParams } from "react-router-dom";
 
-const EditCard = ({ id }) => {
-  const [startHour, setStartHour] = useState("");
-  const [endHour, setEndHour] = useState("");
-  const [jugadores, setJugadores] = useState(0);
-  const [estado, setEstado] = useState("activo");
-  const [imagen, setImagen] = useState(null);
+const EditCard = ({ fieldData }) => {
   const navigate = useNavigate();
+  const { idEstablishment, idField } = useParams();
 
-  const { updateFieldData } = useContext(FieldContext);
+  const [name, setName] = useState(fieldData.name);
+  const [jugadores, setJugadores] = useState(fieldData.size);
+  const [estado, setEstado] = useState(fieldData.available);
+  const [imagen, setImagen] = useState(fieldData.img);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  useEffect(() => {
-    const field = data.find((item) => item.id === id);
-    if (field) {
-      setStartHour(field.startHour.toString());
-      setEndHour(field.endHour.toString());
-      setJugadores(field.players);
-      setEstado(field.status ? "activo" : "inactivo");
-      setImagen(field.img);
-    }
-  }, [id]);
-
-  const handleStartHourChange = (e) => {
-    setStartHour(e.target.value);
+  const handleNameChange = (event) => {
+    setName(event.target.value);
   };
 
-  const handleEndHourChange = (e) => {
-    setEndHour(e.target.value);
+  const handleJugadoresChange = (event) => {
+    setJugadores(event.target.value);
   };
 
-  const handleJugadoresChange = (e) => {
-    setJugadores(parseInt(e.target.value));
+  const handleEstadoChange = (event) => {
+    const value = event.target.value === "activo"; // Convertir 'activo' a true y 'inactivo' a false
+    setEstado(value);
   };
 
-  const handleEstadoChange = (e) => {
-    setEstado(e.target.value);
+  const handleImagenChange = (event) => {
+    const file = event.target.files[0];
+    setImagen(file);
   };
 
-  const handleImagenChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
+  const handleUpload = async () => {
+    if (imagen) {
+      const storageRef = firebase.storage().ref();
+      const fileRef = storageRef.child(imagen.name);
+      const uploadTask = fileRef.put(imagen);
 
-    reader.onload = () => {
-      setImagen(reader.result);
-    };
-
-    if (file) {
-      reader.readAsDataURL(file);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+        },
+        (error) => {
+          console.error("Error al subir la imagen:", error);
+        },
+        () => {
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+            updateFieldData(downloadURL);
+          });
+        }
+      );
     } else {
-      setImagen("../../assets/football-bg-1.jpg");
+      updateFieldData(fieldData.img);
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  
-    const updatedCard = {
-      img: imagen || require("../../assets/football-bg-1.jpg"),
-      id: id,
-      startHour: startHour || 4,
-      endHour: endHour || 23,
-      status: estado === "activo",
-      players: jugadores || 12,
-    };
-  
-    updateFieldData(updatedCard); // Utiliza la función pasada como prop
-    navigate("/");
+  const updateFieldData = async (imageUrl) => {
+    try {
+      await firebase
+        .firestore()
+        .collection("establishments")
+        .doc(idEstablishment)
+        .collection("fields")
+        .doc(idField)
+        .update({
+          name: name,
+          size: jugadores,
+          available: estado,
+          img: imageUrl,
+        });
+
+      navigate("/");
+    } catch (error) {
+      console.error("Error al guardar la información:", error);
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      await handleUpload();
+    } catch (error) {
+      console.error("Error al subir la imagen:", error);
+    }
   };
 
   return (
@@ -88,48 +105,24 @@ const EditCard = ({ id }) => {
                 type="file"
                 accept="image/*"
                 onChange={handleImagenChange}
+                required
               />
             </div>
           </div>
+
           <div className="w-1/2 pl-4">
             <div className="input-container">
-              <div className="input-container">
-              <h1 className="text-2xl font-bold text-0D2C54"> Cancha ID: {id}</h1>
-                <div className="flex">
-                  <div className="w-1/2 pr-2">
-                    <label
-                      htmlFor="startHour"
-                      className="font-montserrat font-bold"
-                    >
-                      Start Hour:
-                    </label>
-                    <input
-                      id="startHour"
-                      type="time"
-                      className="pl-2"
-                      value={startHour}
-                      onChange={handleStartHourChange}
-                      required
-                    />
-                  </div>
-                  <div className="w-1/2 pl-2">
-                    <label
-                      htmlFor="endHour"
-                      className="font-montserrat font-bold"
-                    >
-                      End Hour:
-                    </label>
-                    <input
-                      id="endHour"
-                      type="time"
-                      className="pl-2"
-                      value={endHour}
-                      onChange={handleEndHourChange}
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
+              <label htmlFor="name" className="font-montserrat font-bold">
+                Nombre:
+              </label>
+              <input
+                id="name"
+                type="text"
+                className="pl-2"
+                value={name}
+                onChange={handleNameChange}
+                required
+              />
             </div>
 
             <div className="input-container">
@@ -138,7 +131,7 @@ const EditCard = ({ id }) => {
               </label>
               <input
                 id="jugadores"
-                type="number"
+                type="text"
                 className="pl-2"
                 value={jugadores}
                 onChange={handleJugadoresChange}
@@ -152,7 +145,7 @@ const EditCard = ({ id }) => {
               <select
                 id="estado"
                 className="pl-2"
-                value={estado}
+                value={estado ? "activo" : "inactivo"}
                 onChange={handleEstadoChange}
                 required
               >
@@ -160,10 +153,16 @@ const EditCard = ({ id }) => {
                 <option value="inactivo">Inactivo</option>
               </select>
             </div>
-            <div className="button-container">
-              <button type="submit">Guardar</button>
-            </div>
           </div>
+        </div>
+        <div className="flex justify-center pt-4">
+          <button
+            type="submit"
+            className="bg-gosporty-green text-white font-bold py-2 px-4 rounded"
+            disabled={uploadProgress > 0}
+          >
+            Guardar
+          </button>
         </div>
       </form>
     </div>

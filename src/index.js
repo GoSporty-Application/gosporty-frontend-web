@@ -20,8 +20,8 @@ ReactDOM.render(
           <Route path='/fields/:id' element={<Field />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/addEstablishment' element={<AddEstablishment />} />
-          <Route path='/addField/:id' element={<AddField />} />
-          <Route path='/editField/:id' element={<EditField />} />
+          <Route path='/addField/:idEstablishment' element={<AddField />} />
+          <Route path='/editField/:idEstablishment/:idField' element={<EditField />} />
         </Routes>
       </FieldProvider>
     </Router>
